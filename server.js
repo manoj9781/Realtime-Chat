@@ -11,9 +11,17 @@ const io = socketio(server);
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', (socket) => {
-    console.log("New connection");
+    // console.log("New connection");
 
     socket.emit('message', 'Welcome to Realtime Chat');
+
+    // Broadcast when user connects
+    socket.broadcast.emit('message', 'A new user joined the room');
+
+    //RUns when user discoonects
+    socket.on('disconnect', () => {
+        io.emit('message', 'A user left the room');
+    })
 })
 
 const PORT = 3000 || process.env.PORT;
