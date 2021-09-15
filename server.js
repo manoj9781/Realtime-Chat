@@ -11,21 +11,28 @@ const io = socketio(server);
 app.use(express.static(path.join(__dirname, 'public')));
 
 io.on('connection', (socket) => {
-    // console.log("New connection");
+  // console.log("New connection");
 
-    socket.emit('message', 'Welcome to Realtime Chat');
+  socket.emit('message', 'Welcome to Realtime Chat');
 
-    // Broadcast when user connects
-    socket.broadcast.emit('message', 'A new user joined the room');
+  // Broadcast when user connects
+  socket.broadcast.emit('message', 'A new user joined the room');
 
-    //RUns when user discoonects
-    socket.on('disconnect', () => {
-        io.emit('message', 'A user left the room');
+  //RUns when user discoonects
+  socket.on('disconnect', () => {
+    io.emit('message', 'A user left the room');
+  });
+    
+    //Listen for chatMessage
+
+    socket.on('chatMessage', msg => {
+        // console.log(msg);
+        io.emit('message', msg);
     })
-})
+});
 
 const PORT = 3000 || process.env.PORT;
 
 server.listen(PORT, function () {
-    console.log("Server is running on the port", PORT);
-})
+  console.log('Server is running on the port', PORT);
+});
