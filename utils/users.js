@@ -24,7 +24,6 @@ function userLeave(id) {
 }
 
 // Get room user
-
 function getRoomUsers(room) {
   return users.filter((user) => user.room === room);
 }
