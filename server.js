@@ -27,12 +27,17 @@ io.on('connection', (socket) => {
     // Broadcast when user connects
     socket.broadcast
       .to(user.room)
-      .emit('message', formatMessage(chatBot, `${user.username} joined the chat`));
+      .emit(
+        'message',
+        formatMessage(chatBot, `${user.username} joined the chat`)
+      );
   });
 
   //Listen for chatMessage
   socket.on('chatMessage', (msg) => {
-    io.emit('message', formatMessage('USER', msg));
+    const user = getCurrentUser(socket.id);
+
+    io.to(user.room).emit('message', formatMessage(user.username, msg));
   });
 
   //Runs when user discoonects
