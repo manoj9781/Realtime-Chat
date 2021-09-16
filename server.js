@@ -3,6 +3,7 @@ const path = require('path');
 const http = require('http');
 const socketio = require('socket.io');
 const formatMessage = require('./utils/messages');
+const { userJoin, getCurrentUser } = require('./utils/users');
 
 const app = express();
 
@@ -17,13 +18,16 @@ io.on('connection', (socket) => {
   // console.log("New connection");
 
   socket.on('joinRoom', ({ username, room }) => {
+    const user = userJoin(socket.id, username, room);
+
+    socket.join(user.room);
+
     socket.emit('message', formatMessage(chatBot, 'Welcome to Realtime Chat'));
 
     // Broadcast when user connects
-    socket.broadcast.emit(
-      'message',
-      formatMessage(chatBot, 'A user Joined the Chat')
-    );
+    socket.broadcast
+      .to(user.room)
+      .emit('message', formatMessage(chatBot, `${user.username} joined the chat`));
   });
 
   //Listen for chatMessage
